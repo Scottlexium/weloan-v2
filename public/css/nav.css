@@ -1,0 +1,91 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap');
+body {
+background-color: pink;
+}
+.grid-container > div {
+text-align: center;
+padding: 20px 0;
+font-size: 30px;
+}
+.grid_container {
+height: 100vh;
+display: grid;
+grid-template-columns: 300px calc(99% - 300px);
+grid-template-rows: 100% 200px;
+gap: 10px;
+background-color: #fff;
+}
+.nav_top img{
+  border-radius: 100%;
+}
+.profile_img{
+  width: 200px;
+  height: 200px;
+  border-radius: 100%;
+  border: dashed var(--green01);
+}
+.nav_main{
+  display: flex;
+  flex-direction: column;
+  background-color: var(--gray06);
+  align-items: center;
+}
+.nav_top{
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  line-height: 2;
+}
+.nav_list{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: auto;
+  gap: 40px;
+  text-align: left;
+}
+nav{
+  width: 100%;
+}
+.li_tab{
+  text-decoration: none;
+  color: var(--green04);
+  font-weight: 800;
+  transition: all .6s ease-in-out;
+}
+.nav_list li a:hover{
+color: white;
+}
+.nav_list{
+margin-top: 30px;
+}
+.li_tab{
+width: 100%;
+display: flex;
+justify-content: center;
+align-items: center;
+background-color: var(--gray07);
+transition: all .3s ease-in-out;
+cursor: pointer;
+}
+.li_tab:hover{
+background-color: var(--gray02);
+color: #fff;
+}
+
+.li_content{
+  display: flex;
+  align-items: center;
+  width: 80%;
+  gap: 20px;
+  justify-content: flex-start;
+  height: 60px;
+}
