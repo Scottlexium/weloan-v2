@@ -117,9 +117,13 @@
             })
               .then((response) => response.json())
               .then((data) => {
-                  if (data.user) {
+                  if (data.user && data.role == false) {
+					  console.log(data);
                       window.location.assign('/dashboard')
                   }
+				  else if (data.user && data.role == true) {
+					  window.location.assign('/admin');
+				  }
                   if(data.errors){
                       pwd_err.innerText = data.errors.password;
                       user_err.innerText = data.errors.username;

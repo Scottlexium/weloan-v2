@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = "Edobits";
-const User = require('../models/users');
+// const User = require('../models/users');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -35,7 +35,8 @@ const checkUser =  (req, res, next)=>{
                 next();
             }else{
                 console.log(decodedToken);
-                let user = await User.findById(decodedToken.id);
+                let user = db.collection('users').doc(decodedToken.id);
+                // let user = await User.findById(decodedToken.id);
                 res.locals.user = user;
                 next();
             }

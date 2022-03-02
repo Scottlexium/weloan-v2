@@ -6,7 +6,7 @@ const Flutterwave = require("flutterwave-node-v3");
 const open = require("open");
 var session = require("express-session");
 const cookieParser = require("cookie-parser");
-const User = require("../models/users");
+// const User = require("../models/users");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { requireAuth } = require("../middleware/authMiddleware");
@@ -127,41 +127,80 @@ module.exports.login_get = (req, res) => {
 
 module.exports.login_post = async (req, res) => {
   const { username, password } = req.body;
+  
+  console.log(req.body);
   try {
-    const user = await User.login(username, password);
-    const token = createToken(user._id);
-    res.cookie("Weloan", token, {
-      httpOnly: true,
-      maxAge: maxAge * 1000,
-      sameSite: "lax",
+    const user = db.collection("users");
+    const snapshot = await user.where("username", "==", username).get();
+    if (snapshot.empty) {
+      console.log("No matching documents.");
+      return;
+    }
+    
+    let userPass;
+    let doc;
+    snapshot.forEach((doc) => {
+      userPass = doc.data();
+      doc = doc;
+      const role = doc.data().isAdmin;
+      const auth = bcrypt.compare(password, userPass.password);
+      console.log(`User is ${auth}`);
+      if(auth){
+      const token = createToken(user.id);
+      res.cookie("Weloan", token, {
+        httpOnly: true,
+        maxAge: maxAge * 1000,
+        sameSite: "lax",
+      });
+      res.status(200).json({ user: doc.id, role });
+        console.log(doc.id, "=>", doc.data());
+      }
     });
-    res.status(200).json({ user: user._id });
-    // personUsername = username;
+    
+
   } catch (err) {
+    console.log(err);
     const errors = handleErrors(err);
-    res.status(400).json({ errors });
+      // res.status(400).json({ errors });
   }
+  // try {
+  //   const user = await User.login(username, password);
+  //   const token = createToken(user._id);
+  //   res.cookie("Weloan", token, {
+  //     httpOnly: true,
+  //     maxAge: maxAge * 1000,
+  //     sameSite: "lax",
+  //   });
+  //   res.status(200).json({ user: user._id });
+  //   // personUsername = username;
+  // } catch (err) {
+  //   const errors = handleErrors(err);
+  //   res.status(400).json({ errors });
+  // }
 };
 
 module.exports.register_post = async (req, res) => {
   console.log(req.body);
   const { Email, password, username } = req.body;
   try {
-    let isAdmin = false;
-    const user = await User.create({
-      Email,
-      password,
-      username,
-      isAdmin,
-    });
+    
+    // const user = await User.create({
+    //   Email,
+    //   password,
+    //   username,
+    //   isAdmin,
+    // });
 
     // add some data to firestore
+    // let isAdmin = false;
     const docRef = db.collection("users").doc(username);
-
+    const salt = await bcrypt.genSalt();
+    const postPassword = await bcrypt.hash(password, salt);
     await docRef.set({
       Email: Email,
       username: username,
-      isAdmin: isAdmin,
+      isAdmin: false,
+      password: postPassword,
       firstName: "Not Provided",
       lastName: "Not Provided",
       address: "Not Provided",
