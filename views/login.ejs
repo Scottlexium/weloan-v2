@@ -34,17 +34,28 @@
 					<span class="login100-form-title">
 						Member Login
 					</span>
+					<div
+              style="
+                position: absolute;
+                margin-top: -50px;
+                text-align: center;
+                width: 38%;
+              "
+            >
+              <p id="pwd_err"></p>
+              <p id="user_err"></p>
+            </div>
 
 					<div id="validator_email" class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
-						<input class="input100" type="text" name="email" placeholder="Email">
+						<input class="input100" type="text" id="username" name="Username" placeholder="Username">
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
-							<i class="fa fa-envelope" aria-hidden="true"></i>
+							<i class="fa fa-user" aria-hidden="true"></i>
 						</span>
 					</div>
 
 					<div id="validator_pwd" class="wrap-input100 validate-input" data-validate = "Password is required">
-						<input class="input100" type="password" name="pass" placeholder="Password">
+						<input class="input100" type="password" id="pwd" name="pwd" placeholder="Password">
 						<span class="focus-input100"></span>
 						<span class="symbol-input100">
 							<i class="fa fa-lock" aria-hidden="true"></i>
@@ -52,7 +63,7 @@
 					</div>
 					
 					<div class="container-login100-form-btn">
-						<button class="login100-form-btn">
+						<button id="loginBtn" type="button" class="login100-form-btn">
 							Login
 						</button>
 					</div>
@@ -80,21 +91,23 @@
 
 
     <script>
-        const preEmail = document.getElementById("email");
+        // const preEmail = document.getElementById("email");
+        const preUsername = document.getElementById("username");
         const pwd = document.getElementById("pwd");
-        const regBtn = document.getElementById("registerBtn");
+        const regBtn = document.getElementById("loginBtn");
         const pwd_err = document.getElementById('pwd_err');
         const user_err = document.getElementById('user_err');
         regBtn.addEventListener("click", async (e) => {
-            const Email = preEmail.value
+            // const Email = preEmail.value
             const password = pwd.value;
+            // const fullName = preFullName.value;
             const username = preUsername.value;
             pwd_err.innerText = "";
             
           try {
               e.preventDefault();
-            const data = { Email, password };
-            console.log(data);
+            const data = { password, username };
+            // console.log(data);
             fetch("/login", {
               method: "POST", // or 'PUT'
               headers: {
