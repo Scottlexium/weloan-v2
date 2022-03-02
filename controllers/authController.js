@@ -63,7 +63,7 @@ module.exports.profile_post = (req, res) => {
   filename = req.file.path;
   newpath = filename.split("public").slice(0, 6).join("");
   console.log(`uploaded at ${newpath}`);
-  res.render("register", { url: newpath });
+  res.render("profile", { url: newpath });
 };
 
 module.exports.homepage = (req, res) => {

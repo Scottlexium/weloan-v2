@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
 router.get('', authController.homepage);
 router.get('/home', authController.homepage_get);
 router.get('/booked', authController.booked_get);
-router.get('/profile', authController.profile_get);
+router.get('/profile',requireAuth, authController.profile_get);
 router.post('/profile_pic', upload.single('uploaded_file'), authController.profile_post);
 router.get('/dashboard',requireAuth, authController.dashboard_get);
 router.get('/login', authController.login_get);
