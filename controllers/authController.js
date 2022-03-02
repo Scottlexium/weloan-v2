@@ -15,22 +15,28 @@ const { profile } = require("console");
 const { query } = require("express");
 const qr = require("qrcode");
 const nodemailer = require("nodemailer");
-const { promisify } = require('util');
+const { promisify } = require("util");
 const readFile = promisify(fs.readFile);
-const ShortUniqueId = require('short-unique-id');
-const dotenv = require('dotenv');
+const ShortUniqueId = require("short-unique-id");
+const dotenv = require("dotenv");
 dotenv.config();
-const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
-const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
-const serviceAccount = require('../we-loan-sdk.json');
+const {
+  initializeApp,
+  applicationDefault,
+  cert,
+} = require("firebase-admin/app");
+const {
+  getFirestore,
+  Timestamp,
+  FieldValue,
+} = require("firebase-admin/firestore");
+const serviceAccount = require("../we-loan-sdk.json");
 
 initializeApp({
-  credential: cert(serviceAccount)
+  credential: cert(serviceAccount),
 });
 
 const db = getFirestore();
-
-
 
 const uid = new ShortUniqueId();
 
@@ -60,17 +66,16 @@ module.exports.profile_post = (req, res) => {
   res.render("register", { url: newpath });
 };
 
-
-module.exports.homepage = (req, res)=>{
+module.exports.homepage = (req, res) => {
   console.log(uid.seq());
-  res.redirect('/dashboard');
-}
+  res.redirect("/dashboard");
+};
 // dashboard
 // let newuserId;
 module.exports.dashboard_get = async (req, res) => {
   const userId = res.locals.id.id;
   console.log("na na", userId);
-  res.render('Dashboard')
+  res.render("Dashboard");
 };
 
 // handle errors
@@ -140,18 +145,28 @@ module.exports.login_post = async (req, res) => {
 
 module.exports.register_post = async (req, res) => {
   console.log(req.body);
-  const { Email, password, fullName, username } =
-    req.body;
+  const { Email, password, username } = req.body;
   try {
     let isAdmin = false;
     const user = await User.create({
       Email,
       password,
-      fullName,
       username,
       isAdmin,
     });
-    
+
+    // add some data to firestore
+    const docRef = db.collection("users").doc(username);
+
+    await docRef.set({
+      Email: Email,
+      username: username,
+      isAdmin: isAdmin,
+      firstName: "Not Provided",
+      lastName: "Not Provided",
+      address: "Not Provided",
+    });
+
     const token = createToken(user._id);
     res.cookie("Weloan", token, {
       httpOnly: true,
@@ -175,8 +190,6 @@ module.exports.homepage_get = (req, res) => {
   res.render("home");
 };
 
-module.exports.profile_get = (req, res)=>{
-  res.render('Profile');
-}
-
-
+module.exports.profile_get = (req, res) => {
+  res.render("Profile");
+};

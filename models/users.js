@@ -17,10 +17,6 @@ const userSchema = new Schema(
       required: [true, "please enter a password"],
       minlength: [6, "Min password length is 6 char"],
     },
-    fullName:{
-        type: String,
-        required: true,
-    },
     username:{
         type: String,
         required: true,

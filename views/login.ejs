@@ -81,8 +81,6 @@
 
     <script>
         const preEmail = document.getElementById("email");
-        const preUsername = document.getElementById("username");
-        const preFullName = document.getElementById("fullName");
         const pwd = document.getElementById("pwd");
         const regBtn = document.getElementById("registerBtn");
         const pwd_err = document.getElementById('pwd_err');
@@ -90,15 +88,14 @@
         regBtn.addEventListener("click", async (e) => {
             const Email = preEmail.value
             const password = pwd.value;
-            const fullName = preFullName.value;
             const username = preUsername.value;
             pwd_err.innerText = "";
             
           try {
               e.preventDefault();
-            const data = { Email, password, fullName, username };
+            const data = { Email, password };
             console.log(data);
-            fetch("/register", {
+            fetch("/login", {
               method: "POST", // or 'PUT'
               headers: {
                 "Content-Type": "application/json",

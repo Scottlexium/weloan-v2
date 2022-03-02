@@ -45,12 +45,20 @@
             <img src="images/img-01.png" alt="IMG" />
           </div>
 
-		  
           <form method="POST" class="login100-form validate-form">
-			  
             <span class="login100-form-title"> Weloan register </span>
-			<div style="position: absolute; margin-top: -50px; text-align: center; width: 38%;"><p id="pwd_err"></p> <p id="user_err"></p></div>
-            <div class="wrap-input100" data-validate="Password is required">
+            <div
+              style="
+                position: absolute;
+                margin-top: -50px;
+                text-align: center;
+                width: 38%;
+              "
+            >
+              <p id="pwd_err"></p>
+              <p id="user_err"></p>
+            </div>
+            <!-- <div class="wrap-input100" data-validate="Password is required">
               <input
                 id="fullName"
                 class="input100"
@@ -62,7 +70,7 @@
               <span class="symbol-input100">
                 <i class="fa fa-user" aria-hidden="true"></i>
               </span>
-            </div>
+            </div> -->
 
             <div
               class="wrap-input100"
@@ -101,7 +109,7 @@
                 type="password"
                 name="password"
                 placeholder="Password"
-				minlength="6"
+                minlength="6"
               />
               <span class="focus-input100"></span>
               <span class="symbol-input100">
@@ -133,23 +141,23 @@
 
     <script>
       const preEmail = document.getElementById("email");
-	  const preUsername = document.getElementById("username");
-	  const preFullName = document.getElementById("fullName");
+      const preUsername = document.getElementById("username");
+      // const preFullName = document.getElementById("fullName");
       const pwd = document.getElementById("pwd");
       const regBtn = document.getElementById("registerBtn");
-	  const pwd_err = document.getElementById('pwd_err');
-	  const user_err = document.getElementById('user_err');
+      const pwd_err = document.getElementById("pwd_err");
+      const user_err = document.getElementById("user_err");
       regBtn.addEventListener("click", async (e) => {
-		  const Email = preEmail.value
-		  const password = pwd.value;
-		  const fullName = preFullName.value;
-		  const username = preUsername.value;
-		  pwd_err.innerText = "";
-		  
+        const Email = preEmail.value;
+        const password = pwd.value;
+        // const fullName = preFullName.value;
+        const username = preUsername.value;
+        pwd_err.innerText = "";
+
         try {
-			e.preventDefault();
-          const data = { Email, password, fullName, username };
-		  console.log(data);
+          e.preventDefault();
+          const data = { Email, password, username };
+          console.log(data);
           fetch("/register", {
             method: "POST", // or 'PUT'
             headers: {
@@ -159,15 +167,15 @@
           })
             .then((response) => response.json())
             .then((data) => {
-				if (data.user) {
-					window.location.assign('/dashboard')
-				}
-				if(data.errors){
-					pwd_err.innerText = data.errors.password;
-					user_err.innerText = data.errors.username;
-					console.log(data.errors)
-				}
-            //   console.log("Success:", data);
+              if (data.user) {
+                window.location.assign("/dashboard");
+              }
+              if (data.errors) {
+                pwd_err.innerText = data.errors.password;
+                user_err.innerText = data.errors.username;
+                console.log(data.errors);
+              }
+              //   console.log("Success:", data);
             })
             .catch((error) => {
               console.error("Error:", error);
