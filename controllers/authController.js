@@ -59,11 +59,20 @@ module.exports.booked_get = (req, res) => {};
 
 let newpath = "";
 
-module.exports.profile_post = (req, res) => {
+module.exports.profile_post = async (req, res) => {
   filename = req.file.path;
+  console.log(filename);
   newpath = filename.split("public").slice(0, 6).join("");
   console.log(`uploaded at ${newpath}`);
-  res.render("profile", { url: newpath });
+  const userId = res.locals.id.id;
+  const userDoc = db.collection("users").doc(userId);
+  if (!userDoc) {
+    console.log("No such user")
+  }else{
+    const updatePic = await userDoc.update({Image: newpath});
+    res.render('Profile', { url: newpath, id: userId});
+  }
+  
 };
 
 module.exports.homepage = (req, res) => {
@@ -74,8 +83,11 @@ module.exports.homepage = (req, res) => {
 // let newuserId;
 module.exports.dashboard_get = async (req, res) => {
   const userId = res.locals.id.id;
-  console.log("na na", userId);
-  res.render("Dashboard");
+  const userDoc = db.collection("users").doc(userId);
+  const userData = await userDoc.get();
+  const userDocument = userData.data();
+  // console.log("user id:", userId);
+  res.render("Dashboard", {id:userId, data: userDocument});
 };
 
 // handle errors
@@ -124,15 +136,19 @@ module.exports.login_get = (req, res) => {
 };
 
 // let personUsername;
-
+module.exports.admin_get = (req, res)=>{
+  res.render('admin');
+}
 module.exports.login_post = async (req, res) => {
   const { username, password } = req.body;
   
   console.log(req.body);
   try {
     const user = db.collection("users");
-    const snapshot = await user.where("username", "==", username).get();
+    const snapshot = await user.where('Email', '==', username).get();
+
     if (snapshot.empty) {
+      res.status(401).json({errors: "Email or password Invalid"})
       console.log("No matching documents.");
       return;
     }
@@ -146,7 +162,7 @@ module.exports.login_post = async (req, res) => {
       const auth = bcrypt.compare(password, userPass.password);
       console.log(`User is ${auth}`);
       if(auth){
-      const token = createToken(user.id);
+      const token = createToken(doc.id);
       res.cookie("Weloan", token, {
         httpOnly: true,
         maxAge: maxAge * 1000,
@@ -161,39 +177,14 @@ module.exports.login_post = async (req, res) => {
   } catch (err) {
     console.log(err);
     const errors = handleErrors(err);
-      // res.status(400).json({ errors });
   }
-  // try {
-  //   const user = await User.login(username, password);
-  //   const token = createToken(user._id);
-  //   res.cookie("Weloan", token, {
-  //     httpOnly: true,
-  //     maxAge: maxAge * 1000,
-  //     sameSite: "lax",
-  //   });
-  //   res.status(200).json({ user: user._id });
-  //   // personUsername = username;
-  // } catch (err) {
-  //   const errors = handleErrors(err);
-  //   res.status(400).json({ errors });
-  // }
 };
 
 module.exports.register_post = async (req, res) => {
   console.log(req.body);
   const { Email, password, username } = req.body;
   try {
-    
-    // const user = await User.create({
-    //   Email,
-    //   password,
-    //   username,
-    //   isAdmin,
-    // });
-
-    // add some data to firestore
-    // let isAdmin = false;
-    const docRef = db.collection("users").doc(username);
+    const docRef = db.collection("users").doc();
     const salt = await bcrypt.genSalt();
     const postPassword = await bcrypt.hash(password, salt);
     await docRef.set({
@@ -204,16 +195,17 @@ module.exports.register_post = async (req, res) => {
       firstName: "Not Provided",
       lastName: "Not Provided",
       address: "Not Provided",
+      Image: "https://i.pinimg.com/originals/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg",
     });
 
-    const token = createToken(user._id);
+    const token = createToken(docRef.id);
     res.cookie("Weloan", token, {
       httpOnly: true,
       maxAge: maxAge * 1000,
       sameSite: "lax",
     });
     // res.redirect('/dashboard');
-    res.status(201).json({ user: user._id });
+    res.status(201).json({ user: docRef.id });
   } catch (err) {
     const errors = handleErrors(err);
     res.status(400).json({ errors });
@@ -229,6 +221,10 @@ module.exports.homepage_get = (req, res) => {
   res.render("home");
 };
 
-module.exports.profile_get = (req, res) => {
-  res.render("Profile");
+module.exports.profile_get = async (req, res) => {
+  
+  const user = db.collection("users").doc();
+  const snapshot = await user.get();
+  const userId = res.locals.id.id;
+  res.render("Profile", {id:userId});
 };

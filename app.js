@@ -3,6 +3,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/authRoutes');
 const cookieParser = require('cookie-parser');
+const compression=require('compression')
 dotenv.config();
 const cors = require('cors');
 
@@ -24,6 +25,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 app.use(cors());
+app.use(compression())
 
 app.set('trust proxy', 1) // trust first proxy
 app.use(session({
@@ -34,13 +36,9 @@ app.use(session({
 }));
 
 
-const dbURI = process.env.MONGODB_URI
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
-.then(()=> {
     app.listen(port);
     console.log(`Db connected, now listening on http://localhost:${port}`);
-})
-.catch(err=> console.log(err));
+
 
 
 

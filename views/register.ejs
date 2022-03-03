@@ -168,7 +168,7 @@
             .then((response) => response.json())
             .then((data) => {
               if (data.user) {
-                window.location.assign("/dashboard");
+                window.location.assign(`/dashboard/${data.user}`);
               }
               if (data.errors) {
                 pwd_err.innerText = data.errors.password;

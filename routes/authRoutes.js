@@ -12,7 +12,7 @@ const path = require('path');
 // SET STORAGE
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, './public/Images')
+      cb(null, './public/Profile')
     },
     filename: (req, file, cb) => {
         console.log(file)
@@ -26,9 +26,10 @@ const storage = multer.diskStorage({
 router.get('', authController.homepage);
 router.get('/home', authController.homepage_get);
 router.get('/booked', authController.booked_get);
-router.get('/profile',requireAuth, authController.profile_get);
-router.post('/profile_pic', upload.single('uploaded_file'), authController.profile_post);
-router.get('/dashboard',requireAuth, authController.dashboard_get);
+router.get('/profile/:id',requireAuth, authController.profile_get);
+router.post('/profile_pic', requireAuth, upload.single('uploaded_file'), authController.profile_post);
+router.get('/dashboard/:id',requireAuth, authController.dashboard_get);
+router.get('/admin', authController.admin_get);
 router.get('/login', authController.login_get);
 router.get('/logout', authController.logout_get);
 router.post('/login', authController.login_post);
