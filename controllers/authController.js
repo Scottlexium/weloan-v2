@@ -67,12 +67,11 @@ module.exports.profile_post = async (req, res) => {
   const userId = res.locals.id.id;
   const userDoc = db.collection("users").doc(userId);
   if (!userDoc) {
-    console.log("No such user")
-  }else{
-    const updatePic = await userDoc.update({Image: newpath});
-    res.render('Profile', { url: newpath, id: userId});
+    console.log("No such user");
+  } else {
+    const updatePic = await userDoc.update({ Image: newpath });
+    res.render("Profile", { url: newpath, id: userId });
   }
-  
 };
 
 module.exports.homepage = (req, res) => {
@@ -87,7 +86,7 @@ module.exports.dashboard_get = async (req, res) => {
   const userData = await userDoc.get();
   const userDocument = userData.data();
   // console.log("user id:", userId);
-  res.render("Dashboard", {id:userId, data: userDocument});
+  res.render("Dashboard", { id: userId, data: userDocument });
 };
 
 // handle errors
@@ -136,23 +135,23 @@ module.exports.login_get = (req, res) => {
 };
 
 // let personUsername;
-module.exports.admin_get = (req, res)=>{
-  res.render('admin');
-}
+module.exports.admin_get = (req, res) => {
+  res.render("admin");
+};
 module.exports.login_post = async (req, res) => {
   const { username, password } = req.body;
-  
+
   console.log(req.body);
   try {
     const user = db.collection("users");
-    const snapshot = await user.where('Email', '==', username).get();
+    const snapshot = await user.where("Email", "==", username).get();
 
     if (snapshot.empty) {
-      res.status(401).json({errors: "Email or password Invalid"})
+      res.status(401).json({ errors: "Email or password Invalid" });
       console.log("No matching documents.");
       return;
     }
-    
+
     let userPass;
     let doc;
     snapshot.forEach((doc) => {
@@ -161,19 +160,17 @@ module.exports.login_post = async (req, res) => {
       const role = doc.data().isAdmin;
       const auth = bcrypt.compare(password, userPass.password);
       console.log(`User is ${auth}`);
-      if(auth){
-      const token = createToken(doc.id);
-      res.cookie("Weloan", token, {
-        httpOnly: true,
-        maxAge: maxAge * 1000,
-        sameSite: "lax",
-      });
-      res.status(200).json({ user: doc.id, role });
+      if (auth) {
+        const token = createToken(doc.id);
+        res.cookie("Weloan", token, {
+          httpOnly: true,
+          maxAge: maxAge * 1000,
+          sameSite: "lax",
+        });
+        res.status(200).json({ user: doc.id, role });
         console.log(doc.id, "=>", doc.data());
       }
     });
-    
-
   } catch (err) {
     console.log(err);
     const errors = handleErrors(err);
@@ -195,7 +192,8 @@ module.exports.register_post = async (req, res) => {
       firstName: "Not Provided",
       lastName: "Not Provided",
       address: "Not Provided",
-      Image: "https://i.pinimg.com/originals/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg",
+      Image:
+        "https://i.pinimg.com/originals/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg",
     });
 
     const token = createToken(docRef.id);
@@ -222,9 +220,15 @@ module.exports.homepage_get = (req, res) => {
 };
 
 module.exports.profile_get = async (req, res) => {
-  
-  const user = db.collection("users").doc();
-  const snapshot = await user.get();
   const userId = res.locals.id.id;
-  res.render("Profile", {id:userId});
+  const user = db.collection("users").doc(userId);
+  const snapshot = await user.get();
+  if (!snapshot.exists) {
+    console.log("No such document!");
+  } else {
+    res.render("Profile", { id: userId, data: snapshot.data() });
+    console.log("Document data:", snapshot.data());
+  }
+
+  
 };
