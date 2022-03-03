@@ -3,7 +3,6 @@ const path = require('path');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/authRoutes');
 const cookieParser = require('cookie-parser');
-const compression=require('compression')
 dotenv.config();
 const cors = require('cors');
 
@@ -25,7 +24,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 app.use(cors());
-app.use(compression())
 
 app.set('trust proxy', 1) // trust first proxy
 app.use(session({
